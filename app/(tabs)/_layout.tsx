@@ -1,44 +1,56 @@
 import React from 'react';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Link, Tabs } from 'expo-router';
 import { Pressable } from 'react-native';
+import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/components/useColorScheme';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
-
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>['name'];
-  color: string;
-}) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
-}
+import { useThemeStore } from '@/store/themeStore';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const theme = useThemeStore((state) => state.theme);
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: Colors[theme ?? 'light'].tint,
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
         headerShown: useClientOnlyValue(false, true),
-      }}>
+        tabBarShowLabel: false,
+        tabBarStyle: {
+          backgroundColor: Colors[theme ?? 'light'].background,
+          borderTopLeftRadius: 20,
+          borderTopRightRadius: 20,
+          height: 80,
+        },
+      }}
+    >
       <Tabs.Screen
-        name="index"
+        name='timer'
         options={{
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: 'Timer',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons name='clock-time-five' size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name='index'
+        options={{
+          title: 'Home',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons name='plus-circle' size={50} color={color} />
+          ),
           headerRight: () => (
-            <Link href="/modal" asChild>
+            <Link href='/modal' asChild>
               <Pressable>
                 {({ pressed }) => (
-                  <FontAwesome
-                    name="info-circle"
+                  <MaterialIcons
+                    name='dots-horizontal'
                     size={25}
-                    color={Colors[colorScheme ?? 'light'].text}
+                    color={Colors[theme ?? 'light'].text}
                     style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
                   />
                 )}
@@ -48,12 +60,17 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="two"
+        name='report'
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: 'Report',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name='pie-chart' size={size} color={color} />
+          ),
         }}
       />
     </Tabs>
   );
 }
+// clock-time-five-outline
+// plus-circle
+// pie-chart-outline
