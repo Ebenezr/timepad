@@ -1,18 +1,12 @@
-import { StyleSheet } from 'react-native';
+import { Button, StyleSheet } from 'react-native';
 
-import EditScreenInfo from '@/components/EditScreenInfo';
-import { Text, View } from '@/components/Themed';
+import { View } from '@/components/Themed';
+import CustomBottomSheet from '@/components/CustomBottomSheet';
 
 export default function Report() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Report</Text>
-      <View
-        style={styles.separator}
-        lightColor='#eee'
-        darkColor='rgba(255,255,255,0.1)'
-      />
-      <EditScreenInfo path='app/(tabs)/two.tsx' />
+      <CustomBottomSheet />
     </View>
   );
 }
@@ -22,14 +16,20 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: 'grey',
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
+    color: 'red',
   },
   separator: {
     marginVertical: 30,
     height: 1,
     width: '80%',
+  },
+  contentContainer: {
+    flex: 1,
+    alignItems: 'center',
   },
 });
