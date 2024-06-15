@@ -1,4 +1,4 @@
-import { Button, StyleSheet } from 'react-native';
+import { Button, StyleSheet, Text } from 'react-native';
 
 import { View } from '@/components/Themed';
 import CustomBottomSheet from '@/components/CustomBottomSheet';
@@ -6,7 +6,8 @@ import CustomBottomSheet from '@/components/CustomBottomSheet';
 export default function Report() {
   return (
     <View style={styles.container}>
-      <CustomBottomSheet />
+      <Text>report</Text>
+      {/* <CustomBottomSheet /> */}
     </View>
   );
 }
@@ -16,7 +17,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'grey',
+    backgroundColor: '#FAFAFF',
   },
   title: {
     fontSize: 20,

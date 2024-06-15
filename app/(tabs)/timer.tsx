@@ -11,7 +11,7 @@ export default function Timer() {
         lightColor='#eee'
         darkColor='rgba(255,255,255,0.1)'
       />
-      <CustomBottomSheet />
+      {/* <CustomBottomSheet /> */}
     </View>
   );
 }
@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'grey',
+    backgroundColor: '#FAFAFF',
   },
   title: {
     fontSize: 20,
