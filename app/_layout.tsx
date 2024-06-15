@@ -10,6 +10,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { useThemeStore } from '@/store/themeStore';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import AuthProvider from '@/context/AuthProvider';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -18,7 +19,7 @@ export {
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: '(tabs)',
+  initialRouteName: '/login',
 };
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -68,15 +69,24 @@ function RootLayoutNav() {
   };
 
   return (
-    <ThemeProvider
-      value={theme === 'dark' ? CustomDarkTheme : CustomDefaultTheme}
-    >
-      <GestureHandlerRootView>
-        <Stack>
-          <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
-          <Stack.Screen name='modal' options={{ presentation: 'modal' }} />
-        </Stack>
-      </GestureHandlerRootView>
-    </ThemeProvider>
+    <AuthProvider>
+      <ThemeProvider
+        value={theme === 'dark' ? CustomDarkTheme : CustomDefaultTheme}
+      >
+        <GestureHandlerRootView>
+          <Stack>
+            <Stack.Screen
+              name='(auth)/(tabs)'
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name='(public)/login'
+              options={{ headerShown: false }}
+            />
+            {/* <Stack.Screen name='modal' options={{ presentation: 'modal' }} /> */}
+          </Stack>
+        </GestureHandlerRootView>
+      </ThemeProvider>
+    </AuthProvider>
   );
 }
