@@ -5,12 +5,16 @@ import {
   ThemeProvider,
 } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { useThemeStore } from '@/store/themeStore';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import AuthProvider from '@/context/AuthProvider';
+import { ActivityIndicator, TouchableOpacity } from 'react-native';
+import Colors from '@/constants/Colors';
+import { View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -43,7 +47,11 @@ export default function RootLayout() {
   }, [loaded]);
 
   if (!loaded) {
-    return null;
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size='large' color={Colors.light.primary} />
+      </View>
+    );
   }
 
   return <RootLayoutNav />;
@@ -51,6 +59,7 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const theme = useThemeStore((state) => state.theme);
+  const router = useRouter();
 
   const CustomDarkTheme = {
     ...DarkTheme,
@@ -77,13 +86,55 @@ function RootLayoutNav() {
           <Stack>
             <Stack.Screen
               name='(auth)/(tabs)'
-              options={{ headerShown: false }}
+              options={{
+                headerShown: false,
+              }}
             />
             <Stack.Screen
               name='(public)/login'
-              options={{ headerShown: false }}
+              options={{
+                headerShown: false,
+                title: '',
+                headerBackTitle: '',
+                headerShadowVisible: false,
+              }}
             />
-            {/* <Stack.Screen name='modal' options={{ presentation: 'modal' }} /> */}
+            <Stack.Screen
+              name='(public)/reset-password'
+              options={{
+                headerShown: false,
+                title: '',
+                headerBackTitle: '',
+                headerShadowVisible: false,
+                headerLeft: () => (
+                  <TouchableOpacity onPress={router.back}>
+                    <Ionicons
+                      name='arrow-back'
+                      size={34}
+                      color={Colors.dark.dark}
+                    />
+                  </TouchableOpacity>
+                ),
+              }}
+            />
+            <Stack.Screen
+              name='(public)/signup'
+              options={{
+                headerShown: false,
+                title: '',
+                headerBackTitle: '',
+                headerShadowVisible: false,
+                headerLeft: () => (
+                  <TouchableOpacity onPress={router.back}>
+                    <Ionicons
+                      name='arrow-back'
+                      size={34}
+                      color={Colors.dark.dark}
+                    />
+                  </TouchableOpacity>
+                ),
+              }}
+            />
           </Stack>
         </GestureHandlerRootView>
       </ThemeProvider>

@@ -1,13 +1,15 @@
 import React from 'react';
-import { Link, Tabs } from 'expo-router';
-import { Pressable } from 'react-native';
+import { Link, Tabs, useRouter } from 'expo-router';
+import { Pressable, TouchableOpacity } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Colors from '@/constants/Colors';
 import { useThemeStore } from '@/store/themeStore';
 import TabBar from '@/components/TabBar';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function TabLayout() {
   const theme = useThemeStore((state) => state.theme);
+  const router = useRouter();
 
   return (
     <Tabs tabBar={(props) => <TabBar {...props} />}>
@@ -15,12 +17,18 @@ export default function TabLayout() {
         name='timer'
         options={{
           title: 'Timer',
+          headerLeft: () => (
+            <TouchableOpacity onPress={router.back}>
+              <Ionicons name='arrow-back' size={34} color={Colors.dark.dark} />
+            </TouchableOpacity>
+          ),
         }}
       />
       <Tabs.Screen
         name='index'
         options={{
           title: 'Home',
+
           headerRight: () => (
             <Link href='/modal' asChild>
               <Pressable>
@@ -41,6 +49,11 @@ export default function TabLayout() {
         name='report'
         options={{
           title: 'Report',
+          headerLeft: () => (
+            <TouchableOpacity onPress={router.back}>
+              <Ionicons name='arrow-back' size={34} color={Colors.dark.dark} />
+            </TouchableOpacity>
+          ),
         }}
       />
     </Tabs>

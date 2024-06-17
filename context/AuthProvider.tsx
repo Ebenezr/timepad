@@ -1,16 +1,18 @@
 import { ReactNode, createContext, useEffect } from 'react';
 import { useContext, useState } from 'react';
 import { router, useSegments } from 'expo-router';
+import { useAuthStore } from '@/store/authStore';
 
 type User = {
   id: string;
-  username: string;
+  email: string;
 };
 
 type AuthProvider = {
   user: User | null;
   login: (username: string, password: string) => boolean;
   logout: () => void;
+  resetPassword: (email: string) => void;
 };
 
 function useProtectedRoute(user: User | null) {
@@ -33,6 +35,7 @@ export const AuthContext = createContext<AuthProvider>({
   user: null,
   login: () => false,
   logout: () => {},
+  resetPassword: () => {},
 });
 
 export function useAuth() {
@@ -44,26 +47,12 @@ export function useAuth() {
 }
 
 export default function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-
-  const login = (username: string, password: string) => {
-    console.log('login', username, password);
-    setUser({
-      id: '1',
-      username: username,
-    });
-
-    return true;
-  };
-
-  const logout = () => {
-    setUser(null);
-  };
+  const { login, logout, user, resetPassword } = useAuthStore();
 
   useProtectedRoute(user);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, resetPassword }}>
       {children}
     </AuthContext.Provider>
   );

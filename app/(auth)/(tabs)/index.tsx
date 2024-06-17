@@ -4,7 +4,7 @@ import TimeCard from '@/components/TimeCard';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { FlashList } from '@shopify/flash-list';
 import HeaderDisplayCard from '@/components/HeaderDisplayCard';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native';
 
 const items = [
   {
@@ -46,7 +46,7 @@ const items = [
 export default function Home() {
   return (
     <SafeAreaView style={styles.container}>
-      <HeaderDisplayCard time='6h 30m' project='Project Name' />
+      {/* <HeaderDisplayCard time='6h 30m' project='Project Name' /> */}
 
       <View style={styles.listWrapper}>
         <View style={styles.header}>

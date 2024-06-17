@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Alert,
   SafeAreaView,
@@ -8,19 +8,37 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import * as Yup from 'yup';
 import { useAuth } from '@/context/AuthProvider';
+import { FormikProvider, useFormik } from 'formik';
+import { Link } from 'expo-router';
+import { defaultStyles } from '@/constants/styles';
+
+const logInSchema = Yup.object().shape({
+  email: Yup.string().email().required('email is required'),
+  password: Yup.string().required('password is required'),
+});
 
 export default function login() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-
   const { login } = useAuth();
 
-  const _login = (username: string, password: string) => {
-    if (username === '' || password === '')
-      Alert.alert('Error', 'Please enter a username and password');
-    else login(username, password);
-  };
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+      password: '',
+    },
+    onSubmit: async () => {
+      try {
+        await login(values.email, values.password);
+      } catch (error: any) {
+        Alert.alert('Error', error.message);
+      }
+    },
+    validationSchema: logInSchema,
+  });
+
+  const { errors, touched, handleSubmit, handleChange, handleBlur, values } =
+    formik;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -31,34 +49,46 @@ export default function login() {
             Login or sign up to start tracking your time.
           </Text>
         </View>
-        <View style={styles.separator} />
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Email</Text>
-          <TextInput
-            placeholder='Enter your email'
-            style={styles.input}
-            value={username}
-            onChangeText={setUsername}
-            placeholderTextColor={'#828282'}
-          />
-        </View>
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Password</Text>
-          <TextInput
-            placeholder='Enter your password'
-            style={styles.input}
-            value={password}
-            onChangeText={setPassword}
-            placeholderTextColor={'#828282'}
-            secureTextEntry={true}
-          />
-        </View>
-        <Text style={styles.forgotPassword}>Forgot password?</Text>
-        <Button
-          style={styles.button}
-          title='LOGIN'
-          onPress={() => _login(username, password)}
-        />
+        <View style={defaultStyles.separator} />
+        <FormikProvider value={formik}>
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Email</Text>
+            <TextInput
+              placeholder='Enter your email'
+              style={styles.input}
+              placeholderTextColor={'#828282'}
+              value={values.email}
+              onChangeText={handleChange('email')}
+              onBlur={handleBlur('email')}
+            />
+            {errors.email && touched.email && (
+              <Text style={styles.errorText}>{errors.email}</Text>
+            )}
+          </View>
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Password</Text>
+            <TextInput
+              placeholder='Enter your password'
+              style={styles.input}
+              value={values.password}
+              placeholderTextColor={'#828282'}
+              secureTextEntry={true}
+              onChangeText={handleChange('password')}
+              onBlur={handleBlur('password')}
+            />
+            {errors.password && touched.password && (
+              <Text style={styles.errorText}>{errors.password}</Text>
+            )}
+          </View>
+          <Link
+            href='(public)/reset-password'
+            style={defaultStyles.textLink}
+            asChild
+          >
+            <Text style={styles.forgotPassword}>Forgot password?</Text>
+          </Link>
+          <Button style={styles.button} title='LOGIN' onPress={handleSubmit} />
+        </FormikProvider>
         <Text style={styles.signUpText}>
           Don't have an account? <Text style={styles.signUpLink}>Sign up</Text>
         </Text>
@@ -67,7 +97,7 @@ export default function login() {
   );
 }
 
-const Button = ({
+export const Button = ({
   title,
   onPress,
   style,
@@ -97,13 +127,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 40,
   },
-  separator: {
-    height: 1,
-    backgroundColor: '#828282',
-    marginVertical: 20,
-    opacity: 0.5,
-    marginBottom: 40,
-  },
+
   title: {
     fontSize: 32,
     fontWeight: 'bold',
@@ -133,6 +157,11 @@ const styles = StyleSheet.create({
     color: '#fff',
     backgroundColor: 'rgb(13, 12, 34)',
     opacity: 0.8,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 10,
+    marginTop: 5,
   },
   forgotPassword: {
     color: '#828282',
