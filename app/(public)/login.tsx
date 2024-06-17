@@ -20,7 +20,7 @@ const logInSchema = Yup.object().shape({
 });
 
 export default function login() {
-  const { login } = useAuth();
+  const { login, loginError } = useAuth();
 
   const formik = useFormik({
     initialValues: {
@@ -29,9 +29,13 @@ export default function login() {
     },
     onSubmit: async () => {
       try {
-        await login(values.email, values.password);
+        login(values.email, values.password);
+        loginError && Alert.alert('Error', loginError);
+        formik.resetForm();
       } catch (error: any) {
-        Alert.alert('Error', error.message);
+        formik.resetForm();
+
+        loginError && Alert.alert('Error', loginError);
       }
     },
     validationSchema: logInSchema,
@@ -89,8 +93,12 @@ export default function login() {
           </Link>
           <Button style={styles.button} title='LOGIN' onPress={handleSubmit} />
         </FormikProvider>
+
         <Text style={styles.signUpText}>
-          Don't have an account? <Text style={styles.signUpLink}>Sign up</Text>
+          Don't have an account?{' '}
+          <Link href='(public)/signup' asChild>
+            <Text style={styles.signUpLink}>Sign up</Text>
+          </Link>
         </Text>
       </View>
     </SafeAreaView>

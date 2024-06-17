@@ -1,9 +1,16 @@
-import { Text, View } from '@/components/Themed';
 import { useAuth } from '@/context/AuthProvider';
 import { Form, FormikProvider, useFormik } from 'formik';
-import { Alert, SafeAreaView, StyleSheet, TextInput } from 'react-native';
+import {
+  Alert,
+  SafeAreaView,
+  StyleSheet,
+  TextInput,
+  Text,
+  View,
+} from 'react-native';
 import * as Yup from 'yup';
 import { Button } from './login';
+import { defaultStyles } from '@/constants/styles';
 
 const logInSchema = Yup.object().shape({
   email: Yup.string().email().required('email is required'),
@@ -11,7 +18,7 @@ const logInSchema = Yup.object().shape({
 });
 
 export default function signup() {
-  const { login } = useAuth();
+  const { signup, loginError } = useAuth();
 
   const formik = useFormik({
     initialValues: {
@@ -20,9 +27,11 @@ export default function signup() {
     },
     onSubmit: async () => {
       try {
-        await login(values.email, values.password);
+        signup(values.email, values.password);
+        formik.resetForm();
       } catch (error: any) {
-        Alert.alert('Error', error.message);
+        formik.resetForm();
+        loginError && Alert.alert('Error', loginError);
       }
     },
     validationSchema: logInSchema,
@@ -44,47 +53,45 @@ export default function signup() {
         <View style={styles.header}>
           <Text style={styles.title}>Welcome to TimePad.</Text>
           <Text style={styles.subtitle}>
-            Login or sign up to start tracking your time.
+            Sign up to start tracking your time.
           </Text>
         </View>
-        <View style={styles.separator} />
+        <View style={defaultStyles.separator} />
         <FormikProvider value={formik}>
-          <Form autoComplete='off' onSubmit={formik.handleSubmit}>
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Email</Text>
-              <TextInput
-                placeholder='Enter your email'
-                style={styles.input}
-                placeholderTextColor={'#828282'}
-                value={values.email}
-                onChangeText={handleChange('email')}
-                onBlur={handleBlur('email')}
-              />
-              {errors.email && touched.email && (
-                <Text style={styles.errorText}>{errors.email}</Text>
-              )}
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Password</Text>
-              <TextInput
-                placeholder='Enter your password'
-                style={styles.input}
-                placeholderTextColor={'#828282'}
-                value={values.password}
-                onChangeText={handleChange('password')}
-                onBlur={handleBlur('password')}
-                secureTextEntry
-              />
-              {errors.password && touched.password && (
-                <Text style={styles.errorText}>{errors.password}</Text>
-              )}
-            </View>
-            <Button
-              title='Sign up'
-              onPress={handleSubmit}
-              style={styles.button}
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Email</Text>
+            <TextInput
+              placeholder='Enter your email'
+              style={styles.input}
+              placeholderTextColor={'#828282'}
+              value={values.email}
+              onChangeText={handleChange('email')}
+              onBlur={handleBlur('email')}
             />
-          </Form>
+            {errors.email && touched.email && (
+              <Text style={styles.errorText}>{errors.email}</Text>
+            )}
+          </View>
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Password</Text>
+            <TextInput
+              placeholder='Enter your password'
+              style={styles.input}
+              placeholderTextColor={'#828282'}
+              value={values.password}
+              onChangeText={handleChange('password')}
+              onBlur={handleBlur('password')}
+              secureTextEntry
+            />
+            {errors.password && touched.password && (
+              <Text style={styles.errorText}>{errors.password}</Text>
+            )}
+          </View>
+          <Button
+            title='SIGN UP'
+            onPress={handleSubmit}
+            style={styles.button}
+          />
         </FormikProvider>
       </View>
     </SafeAreaView>
@@ -94,49 +101,93 @@ export default function signup() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  innerContainer: {
-    width: '80%',
+    backgroundColor: '#070417',
   },
   header: {
-    marginBottom: 20,
+    marginBottom: 30,
+    alignItems: 'center',
   },
+  innerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: 40,
+  },
+
   title: {
-    fontSize: 24,
+    fontSize: 32,
     fontWeight: 'bold',
-    marginBottom: 10,
+    color: '#fff',
+    textAlign: 'center',
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#828282',
+    textAlign: 'center',
+    marginTop: 8,
   },
-  separator: {
-    height: 1,
-    backgroundColor: '#E5E5E5',
-    marginVertical: 20,
+  label: {
+    color: '#fff',
+    marginBottom: 8,
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   inputContainer: {
     marginBottom: 20,
   },
-  label: {
-    fontSize: 16,
-    marginBottom: 5,
-  },
   input: {
-    height: 40,
-    borderColor: '#E5E5E5',
+    borderColor: '#333',
     borderWidth: 1,
-    borderRadius: 5,
-    padding: 10,
+    borderRadius: 6,
+    padding: 12,
+    color: '#fff',
+    backgroundColor: 'rgb(13, 12, 34)',
+    opacity: 0.8,
   },
   errorText: {
-    fontSize: 12,
     color: 'red',
+    fontSize: 10,
     marginTop: 5,
   },
+  forgotPassword: {
+    color: '#828282',
+    textAlign: 'right',
+    marginBottom: 20,
+  },
   button: {
+    backgroundColor: '#ffff',
+    borderRadius: 6,
+    paddingVertical: 15,
+    alignItems: 'center',
     marginTop: 20,
+  },
+  buttonText: {
+    color: '#000',
+    fontWeight: 'bold',
+  },
+  orText: {
+    color: '#828282',
+    textAlign: 'center',
+    marginTop: 30,
+    marginBottom: 20,
+  },
+
+  signUpText: {
+    color: '#828282',
+    textAlign: 'center',
+    marginBottom: 20,
+    marginTop: 20,
+  },
+  signUpLink: {
+    color: '#ffff',
+  },
+  footerText: {
+    color: '#828282',
+    textAlign: 'center',
+    fontSize: 12,
+    marginTop: 30,
+    paddingHorizontal: 20,
+  },
+  learnMoreLink: {
+    color: '#fff',
   },
 });

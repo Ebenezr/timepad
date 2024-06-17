@@ -10,9 +10,11 @@ type User = {
 
 type AuthProvider = {
   user: User | null;
+  loginError: string | null;
   login: (username: string, password: string) => boolean;
   logout: () => void;
   resetPassword: (email: string) => void;
+  signup: (email: string, password: string) => void;
 };
 
 function useProtectedRoute(user: User | null) {
@@ -30,9 +32,11 @@ function useProtectedRoute(user: User | null) {
 
 export const AuthContext = createContext<AuthProvider>({
   user: null,
+  loginError: null,
   login: () => false,
   logout: () => {},
   resetPassword: () => {},
+  signup: () => {},
 });
 
 export function useAuth() {
@@ -44,12 +48,15 @@ export function useAuth() {
 }
 
 export default function AuthProvider({ children }: { children: ReactNode }) {
-  const { login, logout, user, resetPassword } = useAuthStore();
+  const { login, logout, user, signup, resetPassword, loginError } =
+    useAuthStore();
 
   useProtectedRoute(user);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, resetPassword }}>
+    <AuthContext.Provider
+      value={{ user, login, logout, loginError, signup, resetPassword }}
+    >
       {children}
     </AuthContext.Provider>
   );
