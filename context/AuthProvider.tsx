@@ -4,8 +4,8 @@ import { router, useSegments } from 'expo-router';
 import { useAuthStore } from '@/store/authStore';
 
 type User = {
-  id: string;
-  email: string;
+  uid?: string;
+  email?: string | null;
 };
 
 type AuthProvider = {
@@ -20,9 +20,6 @@ function useProtectedRoute(user: User | null) {
 
   useEffect(() => {
     const inAuthGroup = segments[0] === '(auth)';
-
-    console.log(inAuthGroup);
-
     if (!user && inAuthGroup) {
       router.replace('/login');
     } else if (user && !inAuthGroup) {

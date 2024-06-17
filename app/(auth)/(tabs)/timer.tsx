@@ -1,8 +1,11 @@
 import { StyleSheet } from 'react-native';
 import { Text, View } from '@/components/Themed';
 import CustomBottomSheet from '@/components/CustomBottomSheet';
+import { useAuth } from '@/context/AuthProvider';
+import { Button } from '@/app/(public)/login';
 
 export default function Timer() {
+  const { logout, user } = useAuth();
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Timer</Text>
@@ -11,6 +14,9 @@ export default function Timer() {
         lightColor='#eee'
         darkColor='rgba(255,255,255,0.1)'
       />
+      <Text>{user?.email}</Text>
+
+      <Button title='Logout' onPress={logout} />
       {/* <CustomBottomSheet /> */}
     </View>
   );

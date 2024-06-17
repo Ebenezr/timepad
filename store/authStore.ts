@@ -1,10 +1,13 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { zustandStorage } from './mmkv';
+import { signOut } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '@/utils/firebase/config';
 
 type User = {
-  id: string;
-  email: string;
+  uid?: string;
+  email?: string | null;
 };
 
 interface AuthStore {
@@ -21,11 +24,30 @@ export const useAuthStore = create<AuthStore>()(
       user: null,
       setUser: (user) => set({ user }),
       login: (email, password) => {
-        console.log('login', email, password);
-        set({ user: { id: '1', email } });
+        signInWithEmailAndPassword(auth, email, password)
+          .then((res) => {
+            console.log('res', res);
+            set({
+              user: {
+                uid: res.user?.uid,
+                email: res.user?.email,
+              },
+            });
+          })
+          .catch((error) => {
+            throw new Error(error?.message);
+          });
         return true;
       },
-      logout: () => set({ user: null }),
+      logout: () => {
+        signOut(auth)
+          .then(() => {
+            set({ user: null });
+          })
+          .catch((error) => {
+            throw new Error(error?.message);
+          });
+      },
       resetPassword: (email) => {
         console.log('resetPassword', email);
       },
